@@ -5,14 +5,14 @@
 /* Font Definition */
 @font-face {
   font-family: 'SuisseIntl';
-  src: url('/fonts/SuisseIntl-Regular.woff') format('woff');
+  src: url('/fonts/SuisseIntl-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'SuisseIntl';
-  src: url('/fonts/SuisseIntl-Light.woff') format('woff');
+  src: url('/fonts/SuisseIntl-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: 'Castoro';
-  src: url('/fonts/Castoro-Regular.ttf') format('truetype');
+  src: url('/fonts/Castoro-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
