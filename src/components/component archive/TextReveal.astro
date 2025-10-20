@@ -1,0 +1,73 @@
+---
+const { duration = 0.8, stagger = 0.08, delay = 0 } = Astro.props;
+const id = `tr-${Math.random().toString(36).slice(2)}`;
+---
+
+<div id={id} class="text-reveal">
+  <slot />
+  <script define:vars={{ id, duration, stagger, delay }}>
+    import gsap from 'gsap';
+
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = document.getElementById(id);
+      if (root) {
+        const lines = Array.from(root.querySelectorAll('p, li, h1, h2, h3, h4, h5, h6'));
+        const targets = [];
+        
+        for (const line of lines) {
+          line.style.overflow = 'hidden';
+          const span = document.createElement('span');
+          span.style.display = 'inline-block';
+          while (line.firstChild) span.appendChild(line.firstChild);
+          line.appendChild(span);
+          targets.push(span);
+        }
+
+        // Set initial state
+        gsap.set(targets, { yPercent: 110, opacity: 0 });
+
+        // Create intersection observer to trigger animation when in view
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // Animate in when element comes into view
+              gsap.to(targets, {
+                yPercent: 0,
+                opacity: 1,
+                ease: 'power3.out',
+                duration: duration,
+                stagger: stagger,
+                delay: delay
+              });
+              
+              // Stop observing after animation starts
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1, // Trigger when 10% of element is visible
+          rootMargin: '0px 0px -50px 0px' // Start animation slightly before fully in view
+        });
+
+        // Start observing the root element
+        observer.observe(root);
+      }
+    });
+  </script>
+</div>
+
+<style>
+  .text-reveal p, .text-reveal li, .text-reveal h1, .text-reveal h2, .text-reveal h3, .text-reveal h4, .text-reveal h5, .text-reveal h6 {
+    will-change: transform, opacity;
+    overflow: hidden;
+  }
+  
+  .text-reveal p span, .text-reveal li span, .text-reveal h1 span, .text-reveal h2 span, .text-reveal h3 span, .text-reveal h4 span, .text-reveal h5 span, .text-reveal h6 span {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+  }
+</style>
+
+

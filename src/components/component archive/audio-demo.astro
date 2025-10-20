@@ -1,0 +1,47 @@
+---
+// Example usage of AudioPlayer component
+// This shows how to pass audio URLs to the player
+---
+
+<div class="p-8">
+  <h1 class="text-2xl font-bold mb-4">Audio Player Demo</h1>
+  
+  <div class="space-y-4">
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Direct URL Example</h2>
+      <p class="text-gray-400 mb-4">
+        The audio player will appear at the bottom of the page when an audio URL is provided.
+        You can pass audioUrl, title, and artist props to customize the display.
+      </p>
+      
+      <!-- Example: You would use this in your components -->
+      <!-- 
+      <AudioPlayer 
+        client:load
+        audioUrl="https://example.com/audio.mp3"
+        title="Sample Track"
+        artist="Sample Artist"
+      />
+      -->
+    </div>
+    
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Sanity CMS Integration</h2>
+      <p class="text-gray-400 mb-4">
+        For Sanity audio files, you can use the url from the asset reference:
+      </p>
+      
+      <pre class="bg-gray-800 p-4 rounded text-sm overflow-x-auto">
+{`// Example with Sanity audio file
+const audioUrl = samplePack.preview?.asset?.url;
+
+<AudioPlayer 
+  client:load
+  audioUrl={audioUrl}
+  title={samplePack.name}
+  artist={samplePack.createdByArtists?.[0]?.name}
+/>`}
+      </pre>
+    </div>
+  </div>
+</div>

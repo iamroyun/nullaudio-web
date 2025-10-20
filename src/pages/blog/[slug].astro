@@ -1,0 +1,95 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityClient, urlFor } from '../../lib/sanity';
+import { PortableText } from 'astro-portabletext';
+import type { Post } from '../../types/sanity';
+
+export async function getStaticPaths() {
+  const posts = await sanityClient.fetch<Post[]>(
+    `*[_type == "post"] {
+      _id,
+      slug
+    }`
+  );
+
+  return posts.map((post) => ({
+    params: { slug: post.slug.current },
+    props: { slug: post.slug.current },
+  }));
+}
+
+const { slug } = Astro.props;
+
+const post = await sanityClient.fetch<Post>(
+  `*[_type == "post" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    publishedDate,
+    excerpt,
+    coverImage,
+    content,
+    "categories": category[]-> { name, slug },
+    "authors": author[]-> { name, profileImage },
+    seo
+  }`,
+  { slug }
+);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const pageTitle = post.seo?.metaTitle || post.title;
+const pageDescription = post.seo?.metaDescription || post.excerpt || '';
+---
+
+<Layout title={`${pageTitle} | null.audio`}>
+  <main class="min-h-screen py-8 pt-24">
+    {/* Header */}
+    <header class="mb-12 px-4">
+      <div class="max-w-6xl mx-auto text-center">
+        <a href="/blog" class="inline-block text-gray-400 hover:text-cyan-400 transition-colors mb-8">
+          ← transmissions
+        </a>
+        <h1 class="text-4xl md:text-5xl font-medium leading-tight text-balance text-white tracking-tighter mb-6">{post.title}</h1>
+
+        {/* Category Tags */}
+        {post.categories && post.categories.length > 0 && (
+          <div class="flex flex-wrap gap-3 justify-center mb-12">
+            {post.categories.map((category) => (
+              <span class="px-3 py-1 text-sm font-medium bg-cyan-400 text-black">{category.name}</span>
+            ))}
+          </div>
+        )}
+
+        {post.coverImage && (
+          <div class="aspect-[16/9] overflow-hidden my-16 border-white border-2">
+            <img
+              src={urlFor(post.coverImage).width(1200).height(675).url()}
+              alt={post.coverImage.alt || post.title}
+              class="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
+        {post.excerpt && (
+          <p class="text-xl py-12 text-white/80 leading-relaxed">
+            {post.excerpt}
+          </p>
+        )}
+      </div>
+    </header>
+
+    {/* Content */}
+    <article class="px-4">
+      <div class="max-w-4xl mx-auto">
+        {post.content && (
+          <div class="max-w-80ch mx-auto line-height-1.7">
+            <PortableText value={post.content} />
+          </div>
+        )}
+      </div>
+    </article>
+  </main>
+</Layout>

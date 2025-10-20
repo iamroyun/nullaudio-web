@@ -1,0 +1,156 @@
+---
+import { sanityClient, urlFor } from "../lib/sanity";
+import AnimatedText from "./animations/AnimatedText.astro";
+
+const inspiredArtists = await sanityClient.fetch(`
+  *[_type == "inspiredArtist" && defined(profileImage.asset)]
+  | order(_createdAt desc) {
+    _id,
+    name,
+    profileImage
+  }
+`);
+
+const slides: { src: string; alt: string }[] = inspiredArtists.map((a: any) => ({
+  src: urlFor(a.profileImage).width(1200).height(1600).fit("crop").url(),
+  alt: a.name ?? "",
+}));
+---
+
+<section
+  id="echoes"
+  class="section-fade echoes-section relative flex flex-col md:flex-row items-center min-h-screen overflow-hidden text-white bg-transparent section-spacing"
+>
+  <!-- Left text column -->
+  <div class="z-10 w-full md:w-2/6 px-8 md:px-16 py-16">
+    <AnimatedText
+      as="h2"
+      variant="mask"
+      className="heading-2 pt-4"
+      text="inspired by"
+    />
+    <AnimatedText
+      as="p"
+      variant="words"
+      className="subheading max-w-sm"
+      text='a collection of voices that echoed through <span class="text-neutral-800">Void</span>'
+    />
+    <a
+      href="/explore"
+      class="explore-link mb-4 text-violet-300 font-semibold tracking-wider uppercase text-base transition-colors duration-200"
+      aria-label="Explore all echoes"
+    >
+      EXPLORE ALL
+    </a>
+  </div>
+
+  <!-- Right image carousel -->
+  <div
+    class="echoes-container relative w-full md:w-full overflow-hidden h-[30vh] md:h-[40vh]"
+    style="-webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,1) 18%, rgba(0,0,0,1));
+           mask-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,1) 18%, rgba(0,0,0,1));"
+  >
+    <div class="echoes-track flex h-full gap-12 md:gap-8 pl-8 md:pl-8 pr-0 md:pr-0">
+      {slides.map((s) => (
+        <a
+          href="/explore"
+          class="group relative block shrink-0 w-[38vw] md:w-[20rem] max-w-sm h-full rounded-2xl overflow-hidden"
+        >
+          <img
+            src={s.src}
+            alt={s.alt}
+            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05] grayscale group-hover:grayscale-0"
+          />
+          <div class="absolute inset-0 pointer-events-none flex items-end justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span
+              class="m-3 px-2.5 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white/90 text-xs md:text-sm uppercase tracking-wide"
+            >
+              {s.alt}
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Explore link underline animation -->
+<style>
+  .explore-link {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+  }
+
+  .explore-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 1px;
+    background-color: #a78bfa;
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition:
+      transform 0.32s cubic-bezier(0.68, 0.01, 0.25, 1),
+      opacity 0.28s cubic-bezier(0.68, 0.01, 0.25, 1);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .explore-link:hover::after,
+  .explore-link:focus-visible::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+
+  function initEchoesAnimation() {
+    const container = document.querySelector(".echoes-container");
+    const track = document.querySelector(".echoes-track");
+
+    if (!(container instanceof HTMLElement) || !(track instanceof HTMLElement)) {
+      console.warn("Echoes elements not found, retrying in 100ms...");
+      setTimeout(initEchoesAnimation, 100);
+      return;
+    }
+
+    // Force layout reflow
+    container.style.width = container.offsetWidth + "px";
+    track.style.width = track.scrollWidth + "px";
+
+    const containerWidth = container.offsetWidth;
+    const trackWidth = track.scrollWidth;
+    const distance = trackWidth - containerWidth;
+
+    if (distance <= 0) {
+      console.warn("No scroll distance yet, retrying...");
+      setTimeout(initEchoesAnimation, 200);
+      return;
+    }
+
+    gsap.set(track, { x: 0 });
+
+    const tl = gsap.to(track, {
+      x: -distance,
+      duration: 20,
+      ease: "none",
+      yoyo: true,
+      repeat: -1,
+    });
+
+    container.addEventListener("mouseenter", () => tl.pause());
+    container.addEventListener("mouseleave", () => tl.resume());
+
+    console.info("Echoes animation initialized.");
+  }
+
+  // Init when hydrated and on load
+  window.addEventListener("load", initEchoesAnimation);
+  initEchoesAnimation();
+</script>

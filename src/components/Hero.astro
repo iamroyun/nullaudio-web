@@ -1,0 +1,23 @@
+---
+import AnimatedText from './animations/AnimatedText.astro';
+---  
+  
+  <section class="section-fade flex flex-col items-center justify-center h-screen text-center px-4">
+  <h1 class="text-8xl md:text-[8rem] font-normal mb-4 lowercase font-serif text-gradient">
+    null
+  </h1>
+  <AnimatedText
+  as="p"
+  variant="words"
+  className="subheading max-w-sm"
+  text='Samples born from the <span class="text-neutral-800">Void</span>'
+/>
+  {/* TODO: Adjust the href and aria-label here later */}
+  <a
+    href="/blog"
+    class="btn-secondary"
+    aria-label="Go to transmissions blog"
+  >
+    Enter the <span class="text-neutral-800">Void</span>
+  </a>
+</section>

@@ -1,0 +1,60 @@
+---
+export interface Props {
+  id: number;
+  image: string;
+  title: string;
+  description: string;
+  link: string;
+  category: string;
+  categoryColor: string;
+  date: string;
+}
+
+const { 
+  id,
+  image,
+  title,
+  description,
+  link,
+  category,
+  categoryColor,
+  date
+} = Astro.props;
+---
+
+<div
+  class="transmission-card relative flex flex-col md:flex-row bg-neutral-950 border border-neutral-800 rounded-lg overflow-hidden hover:border-neutral-700 transition md:h-64 group"
+>
+  <!-- Category Tag in Top Right -->
+  <span
+    class={`absolute top-4 right-4 text-xs text-white px-3 py-1 rounded ${categoryColor}`}
+  >
+    {category}
+  </span>
+
+  <img
+    src={image}
+    alt={title}
+    class="w-full md:w-64 h-48 md:h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+  />
+  <div class="relative p-6 flex-1 md:h-full">
+    <!-- Main content centered vertically -->
+    <div class="flex flex-col justify-center h-full pr-16">
+      <h3 class="font-semibold text-lg uppercase mb-2">{title}</h3>
+      <p class="text-gray-400 text-md leading-relaxed mb-4 line-clamp-2">
+        {description}
+      </p>
+      <a
+        href={link}
+        class="text-md text-purple-300 hover:text-purple-400 transition"
+      >
+        READ NOW →
+      </a>
+    </div>
+    
+    <!-- Date positioned absolutely at bottom -->
+    <div class="absolute bottom-6 right-6">
+      <span class="text-s text-gray-500">{date}</span>
+    </div>
+  </div>
+</div>

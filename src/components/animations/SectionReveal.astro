@@ -1,0 +1,38 @@
+---
+import { animateSection } from "./gsap-utils.js";
+
+const {
+  id = `section-${Math.random().toString(36).substring(2, 8)}`,
+  delay = 0,
+  className = "",
+  disableAnimation = false,
+  children,
+} = Astro.props;
+---
+
+<section
+  id={id}
+  data-delay={delay}
+  class={`relative overflow-hidden ${className}`}
+>
+  {children}
+</section>
+
+<script>
+  import { animateSection } from "./gsap-utils.js";
+
+  // Scoped to this component only
+  const root = document.currentScript?.parentElement;
+  const section = root?.querySelector("section");
+
+  if (section && !("disableAnimation" in Astro.props && Astro.props.disableAnimation)) {
+    const delay = Number(section.dataset.delay || "0");
+
+    // Run animation once hydrated
+    animateSection(`#${section.id}`, {
+      texts: [`#${section.id} .reveal-text`],
+      images: [`#${section.id} .reveal-img`],
+      delay,
+    });
+  }
+</script>

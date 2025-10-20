@@ -1,0 +1,236 @@
+---
+import AnimatedText from './animations/AnimatedText.astro';
+/**
+ * Reusable FAQ component for Astro using Tailwind CSS
+ * - SEO: emits JSON-LD (FAQPage)
+ * - Accessibility: semantic headings, aria attributes, focus ring
+ * - Behavior: single-open accordion with keyboard support and animated chevron
+ * - Styling: Tailwind classes only, no inline CSS
+ */
+
+ type FAQItem = { question: string; answer: string };
+export interface Props {
+  id?: string;
+  heading?: string;
+  items: FAQItem[];
+  structuredData?: boolean;
+}
+
+const {
+  id = 'faq',
+  heading = 'FAQ',
+  items = [],
+  structuredData = true,
+} = Astro.props;
+
+const jsonLd = structuredData
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: items.map((it) => ({
+        '@type': 'Question',
+        name: it.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: it.answer,
+        },
+      })),
+    }
+  : null;
+---
+
+  <section id={id} aria-labelledby={`${id}-heading`} class="section-fade max-w-7xl mx-auto px-6 md:px-20 section-spacing">
+  <AnimatedText   
+    as="h2"
+    variant="mask"
+    className="heading-2 text-center"
+    text={heading}
+  />
+
+  <ul class="divide-y divide-white/10" data-accordion-root>
+    {items.map((item, idx) => (
+      <li class="py-2" data-accordion-item>
+        <h3 class="sr-only">{item.question}</h3>
+        <button
+          type="button"
+          class="group flex w-full items-start justify-between gap-6 py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C1A8FF] focus-visible:ring-offset-0"
+          aria-expanded="false"
+          aria-controls={`${id}-panel-${idx}`}
+          id={`${id}-trigger-${idx}`}
+          data-faq-button
+        >
+          <span class="text-[#F5F5F5] text-base md:text-lg leading-snug">
+            {item.question}
+          </span>
+          <span aria-hidden="true" class="mt-0.5 inline-flex shrink-0 select-none transition-transform duration-400 ease-[cubic-bezier(0.4,0,0.2,1)]" data-faq-chevron>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.085l3.71-3.856a.75.75 0 111.08 1.04l-4.24 4.41a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+          </span>
+        </button>
+        <div
+          id={`${id}-panel-${idx}`}
+          role="region"
+          aria-labelledby={`${id}-trigger-${idx}`}
+          hidden
+          class="overflow-hidden transition-all duration-600 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style="max-height: 0; opacity: 0;"
+        >
+          <div class="pb-6 pr-10 text-[#9C9C9C] leading-relaxed">
+            <Fragment set:html={item.answer} />
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  {structuredData && (
+    <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+  )}
+</section>
+
+<script is:inline define:vars={{ faqId: id}}>
+  // Single-open accordion logic (vanilla JS)
+  document.addEventListener('DOMContentLoaded', function() {
+    const ROOT_ID = faqId;
+    const root = document.getElementById(ROOT_ID);
+    
+    if (!root) {
+      console.error('FAQ root element not found:', ROOT_ID);
+      return;
+    }
+    
+    const list = root.querySelector('[data-accordion-root]');
+    if (!list) {
+      console.error('FAQ accordion root not found');
+      return;
+    }
+    
+    const items = Array.from(list.querySelectorAll('[data-accordion-item]'));
+    let openIndex = -1;
+    let isAnimating = false;
+    let animationTimeouts = new Map();
+
+    function closeItem(i) {
+      const li = items[i];
+      if (!li) return;
+      
+      // Clear any existing timeout for this item
+      if (animationTimeouts.has(i)) {
+        clearTimeout(animationTimeouts.get(i));
+        animationTimeouts.delete(i);
+      }
+      
+      const btn = li.querySelector('[data-faq-button]');
+      const panel = li.querySelector('[role="region"]');
+      const chevron = li.querySelector('[data-faq-chevron]');
+      
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      li.removeAttribute('data-open');
+      
+      if (panel) {
+        // Animate panel height and opacity
+        panel.style.maxHeight = '0px';
+        panel.style.opacity = '0';
+        
+        // Hide panel after animation completes
+        const timeout = setTimeout(() => {
+          panel.setAttribute('hidden', '');
+          isAnimating = false;
+          animationTimeouts.delete(i);
+        }, 600);
+        
+        animationTimeouts.set(i, timeout);
+      }
+      
+      if (chevron) {
+        chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function openItem(i) {
+      const li = items[i];
+      if (!li) return;
+      
+      // Clear any existing timeout for this item
+      if (animationTimeouts.has(i)) {
+        clearTimeout(animationTimeouts.get(i));
+        animationTimeouts.delete(i);
+      }
+      
+      const btn = li.querySelector('[data-faq-button]');
+      const panel = li.querySelector('[role="region"]');
+      const chevron = li.querySelector('[data-faq-chevron]');
+      const content = panel?.querySelector('div');
+      
+      if (btn) btn.setAttribute('aria-expanded', 'true');
+      li.setAttribute('data-open', '');
+      
+      if (panel) {
+        // Show panel first
+        panel.removeAttribute('hidden');
+        
+        // Get the natural height of the content
+        const contentHeight = content?.scrollHeight || 0;
+        const paddingBottom = 24; // pb-6 = 1.5rem = 24px
+        const totalHeight = contentHeight + paddingBottom;
+        
+        // Animate panel height and opacity
+        panel.style.maxHeight = totalHeight + 'px';
+        panel.style.opacity = '1';
+        
+        // Set animation flag
+        isAnimating = true;
+        
+        // Clear animation flag after animation completes
+        const timeout = setTimeout(() => {
+          isAnimating = false;
+          animationTimeouts.delete(i);
+        }, 600);
+        
+        animationTimeouts.set(i, timeout);
+      }
+      
+      if (chevron) {
+        chevron.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    items.forEach((li, i) => {
+      const btn = li.querySelector('[data-faq-button]');
+      if (!btn) {
+        console.error('FAQ button not found for item:', i);
+        return;
+      }
+      
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Prevent rapid clicking during animation
+        if (isAnimating) {
+          return;
+        }
+        
+        console.log('FAQ button clicked:', i);
+        
+        if (openIndex === i) {
+          closeItem(i);
+          openIndex = -1;
+        } else {
+          if (openIndex !== -1) closeItem(openIndex);
+          openIndex = i;
+          openItem(i);
+        }
+      });
+
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+    
+    console.log('FAQ accordion initialized with', items.length, 'items');
+  });
+</script>

@@ -1,0 +1,29 @@
+---
+import { animateImage } from "./gsap-utils.js";
+
+const { src, alt = "", variant = "fade", delay = 0, className = "" } = Astro.props;
+const id = `${variant}-${Math.random().toString(36).substring(2, 8)}`;
+---
+
+<img
+  data-img={id}
+  data-variant={variant}
+  data-delay={delay}
+  src={src}
+  alt={alt}
+  class={`w-full object-cover ${className}`}
+/>
+
+<script>
+  import { animateImage } from "./gsap-utils.js";
+
+  // Find all elements with data-img attribute on the page
+  const elements = document.querySelectorAll('[data-img]');
+
+  elements.forEach(el => {
+    const htmlEl = el as HTMLElement;
+    const variant = htmlEl.dataset.variant || 'fade';
+    const delay = Number(htmlEl.dataset.delay || '0');
+    animateImage(htmlEl, variant, delay);
+  });
+</script>

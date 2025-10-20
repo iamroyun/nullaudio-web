@@ -1,0 +1,71 @@
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const grid = document.querySelector(".grid-bg") as HTMLElement;
+      if (!grid) return;
+      let raf = 0;
+    
+      const move = (e: PointerEvent) => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          grid.style.setProperty("--mx", e.clientX + "px");
+          grid.style.setProperty("--my", e.clientY + "px");
+          raf = 0;
+        });
+      };
+    
+      window.addEventListener("pointermove", move, { passive: true });
+    
+      // center light on load
+      grid.style.setProperty("--mx", window.innerWidth / 2 + "px");
+      grid.style.setProperty("--my", window.innerHeight / 2 + "px");
+    });
+    </script>
+    
+    <style>
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-color: #000;
+    
+      --cell: clamp(160px, 16vw, 240px);
+      --grid-color: rgba(255, 255, 255, 0.023);
+      --light-color: rgba(222, 222, 222, 0.085);
+      --mx: 50vw;
+      --my: 50vh;
+    
+      /* LAYERS:
+         1–2 = repeating grid lines
+         3 = vignette (optional)
+         4 = single full-screen cursor light (not repeated)
+      */
+      background-image:
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px),
+        radial-gradient(80vmax 60vmax at 50% 60%, transparent 40%, rgba(0,0,0,0.35) 100%),
+        radial-gradient(60vmax 60vmax at var(--mx) var(--my),
+          var(--light-color),
+          transparent 55%);
+    
+      /* grid layers repeat */
+      background-size:
+        var(--cell) var(--cell),
+        var(--cell) var(--cell),
+        100% 100%,   /* vignette covers screen */
+        100% 100%;   /* cursor light covers screen */
+    
+      /* grid layers centered */
+      background-position:
+        center center,
+        center center,
+        center center,
+        center center;
+    
+      background-blend-mode: normal, normal, multiply, screen;
+      background-attachment: fixed;
+      image-rendering: pixelated;
+    }
+    </style>
+    
+    <div class="grid-bg"></div>

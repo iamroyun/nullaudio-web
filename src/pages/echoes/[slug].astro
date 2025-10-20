@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityClient, urlFor } from '../../lib/sanity';
+import type { InspiredArtist } from '../../types/sanity';
+
+export async function getStaticPaths() {
+  const artists = await sanityClient.fetch<InspiredArtist[]>(
+    `*[_type == "inspiredArtist"] {
+      _id,
+      name,
+      slug,
+      profileImage,
+      description
+    }`
+  );
+
+  return artists.map((artist) => ({
+    params: { slug: artist.slug.current },
+    props: { artist },
+  }));
+}
+
+const { artist } = Astro.props;
+---
+
+<Layout title={`${artist.name} | null.audio`}>
+  <main class="min-h-screen px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-7xl md:text-8xl font-medium leading-tight text-balance text-white tracking-tighter mb-4">{artist.name}</h1>
+      {artist.profileImage && (
+        <img
+          src={urlFor(artist.profileImage).width(800).height(800).url()}
+          alt={artist.name}
+          class="w-full max-w-2xl mx-auto mb-6"
+        />
+      )}
+      {/* Render description with Portable Text if needed */}
+    </div>
+  </main>
+</Layout>

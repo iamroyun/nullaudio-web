@@ -1,0 +1,51 @@
+---
+  // SmoothScroll.astro – Lenis + GSAP ScrollTrigger integration
+---
+
+<script>
+  import Lenis from 'lenis';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Initialize Lenis
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    touchMultiplier: 2,
+  });
+
+  // Sync Lenis with GSAP ScrollTrigger
+  lenis.on('scroll', ScrollTrigger.update);
+
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+  gsap.ticker.lagSmoothing(0);
+
+  // Fade-in sections
+  function fadeInSections() {
+    gsap.utils.toArray('.section-fade').forEach((section) => {
+      gsap.fromTo(
+        section as HTMLElement,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 4,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: section as HTMLElement,
+            start: 'top 50%',
+            once: true,
+          },
+        }
+      );
+    });
+  }
+
+  // Wait for DOM, then run fade-in setup
+  window.addEventListener('load', () => {
+    setTimeout(fadeInSections, 200);
+  });
+</script>

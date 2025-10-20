@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Navbar from '../components/Navbar.astro';
+import Echoes from '../components/Echoes.astro';
+import Fragments from '../components/Fragments.astro';
+import RecentTransmissions from '../components/RecentTransmissions.astro';
+import FAQ from '../components/FAQ.astro';
+
+const faqItems = [
+  {
+    question: "What is null.audio?",
+    answer: "null.audio is a digital space for sound and stillness — a quiet place for creative isolation.",
+  },
+  {
+    question: "Can I use the samples commercially?",
+    answer: "yes. once downloaded, you can use them in any production, commercial or personal.",
+  },
+  {
+    question: "Do I need an account to download packs?",
+    answer: "a free account is required to download packs and receive updates on new releases.",
+  },
+];
+---
+
+<Layout>
+  <main class="min-h-screen px-4 py-8">
+    <Navbar />
+    <Hero />
+    <Echoes />  
+    <Fragments />
+    <RecentTransmissions />
+    <FAQ items={faqItems} id="faq" />
+  </main>
+</Layout>

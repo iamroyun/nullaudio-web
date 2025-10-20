@@ -1,0 +1,35 @@
+---
+import { animateText } from "./gsap-utils.js";
+
+const {
+  as: Tag = "span",
+  text,
+  variant = "fade",
+  delay = 0,
+  className = "",
+} = Astro.props;
+
+const id = `${variant}-${Math.random().toString(36).substring(2, 8)}`;
+---
+
+<Tag
+  data-anim={id}
+  data-variant={variant}
+  data-delay={delay}
+  class={className}
+  set:html={text}>
+</Tag>
+
+<script>
+  import { animateText } from "./gsap-utils.js";
+
+  // Find all elements with data-anim attribute on the page
+  const elements = document.querySelectorAll('[data-anim]');
+
+  elements.forEach(el => {
+    const htmlEl = el as HTMLElement;
+    const variant = htmlEl.dataset.variant || 'fade';
+    const delay = Number(htmlEl.dataset.delay || '0');
+    animateText(htmlEl, variant, delay);
+  });
+</script>

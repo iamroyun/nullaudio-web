@@ -1,0 +1,60 @@
+---
+import '../styles/global.css';
+import GridBackground from '../components/GridBackground.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+import SmoothScroll from '../components/SmoothScroll.astro';
+---
+
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>null</title>
+  </head>
+  <body class="bg-black text-white min-h-screen">
+    <GridBackground />
+    <CustomCursor />
+    <SmoothScroll />
+    <slot />
+    
+    <!-- Section Fade-In Animation Script -->
+    <script>
+      // Intersection Observer for section fade-in
+      document.addEventListener('DOMContentLoaded', () => {
+        // Small delay to ensure all components are rendered
+        setTimeout(() => {
+          console.log('Setting up section fade observer...');
+          
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                console.log('Observer triggered for:', entry.target.className, 'isIntersecting:', entry.isIntersecting);
+                if (entry.isIntersecting) {
+                  console.log('Adding fade-in class to:', entry.target.className);
+                  entry.target.classList.add('fade-in');
+                  observer.unobserve(entry.target); // Stop observing once faded in
+                }
+              });
+            },
+            {
+              threshold: 0.1, // Trigger when 10% visible
+              rootMargin: '0px 0px 0px 0px' // No margin - trigger when element enters viewport
+            }
+          );
+
+          // Observe all sections with section-fade class
+          const sections = document.querySelectorAll('.section-fade');
+          console.log('Found sections to observe:', sections.length);
+          sections.forEach((section, index) => {
+            console.log(`Observing section ${index}:`, section.className);
+            console.log(`Initial opacity:`, window.getComputedStyle(section).opacity);
+            observer.observe(section);
+          });
+        }, 100); // 100ms delay
+      });
+    </script>
+  </body>
+</html>

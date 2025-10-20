@@ -1,0 +1,89 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityClient, urlFor } from '../../lib/sanity';
+import type { Post } from '../../types/sanity';
+
+const posts = await sanityClient.fetch<Post[]>(
+  `*[_type == "post"] | order(publishedDate desc) {
+    _id,
+    title,
+    slug,
+    publishedDate,
+    excerpt,
+    coverImage,
+    "categories": category[]-> { name, slug },
+    "authors": author[]-> { name, profileImage }
+  }`
+);
+---
+
+<Layout title="Transmissions | null.audio">
+  <main class="min-h-screen px-4 py-8 pt-24">
+    <div class="max-w-6xl mx-auto">
+      <h1 class="text-xl md:text-2xl font-light mb-12 text-center">//transmissions</h1>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <article class="group border-2 border-stone-400 p-6 hover:border-primary transition-colors">
+            <a href={`/blog/${post.slug.current}`} class="block">
+              {post.coverImage && (
+                <div class="aspect-[4/3] overflow-hidden mb-4">
+                  <img
+                    src={urlFor(post.coverImage).width(600).height(450).url()}
+                    alt={post.coverImage.alt || post.title}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
+              
+              <div class="space-y-3">
+                {/* Category Tags */}
+                {post.categories && post.categories.length > 0 && (
+                  <div class="flex flex-wrap gap-2">
+                    {post.categories.map((category) => (
+                      <span class="px-3 py-1 text-sm font-medium bg-cyan-400 text-black">{category.name}</span>
+                    ))}
+                  </div>
+                )}
+                
+                <h2 class="text-lg md:text-xl font-light group-hover:text-cyan-400 transition-colors">
+                  {post.title}
+                </h2>
+                
+                <div class="flex items-center justify-between text-sm text-gray-400">
+                  {post.authors && post.authors.length > 0 && (
+                    <div class="flex items-center gap-2">
+                      {post.authors[0].profileImage && (
+                        <img
+                          src={urlFor(post.authors[0].profileImage).width(24).height(24).url()}
+                          alt={post.authors[0].name}
+                          class="w-6 h-6 rounded-full object-cover"
+                        />
+                      )}
+                      <span>by {post.authors.map(author => author.name).join(', ')}</span>
+                    </div>
+                  )}
+                  {post.publishedDate && (
+                    <time datetime={post.publishedDate}>
+                      {new Date(post.publishedDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  )}
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+      
+      {posts.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-400">No transmissions yet.</p>
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,159 @@
+---
+/**
+ * CustomCursor.astro – GSAP QuickSetter version
+ * null.audio edition: ultra-smooth, GPU-accelerated cursor.
+ * Requires GSAP (you can load it globally or import from CDN below).
+ */
+---
+
+<!-- GSAP imported via npm package -->
+
+<style>
+  :root {
+    --cursor-size: 12px;
+    --cursor-interactive-size: 28px;
+    --cursor-color: #F5F5F5;
+    --cursor-accent: #C1A8FF;
+    --cursor-z: 9999;
+    --cursor-opacity: 0.9;
+    --cursor-transition: 160ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  @media (pointer: fine) {
+    html.has-custom-cursor,
+    body.has-custom-cursor {
+      cursor: none !important;
+    }
+
+    /* Remove default cursor on interactive elements */
+    html.has-custom-cursor a,
+    html.has-custom-cursor button,
+    html.has-custom-cursor [role="button"],
+    html.has-custom-cursor [role="link"],
+    html.has-custom-cursor [data-interactive="true"] {
+      cursor: none !important;
+    }
+
+    .custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--cursor-size);
+      height: var(--cursor-size);
+      border-radius: 9999px;
+      background: var(--cursor-color);
+      opacity: var(--cursor-opacity);
+      pointer-events: none;
+      z-index: var(--cursor-z);
+      mix-blend-mode: normal;
+      transform: translate3d(-100px, -100px, 0);
+      will-change: transform;
+      transition:
+        width var(--cursor-transition),
+        height var(--cursor-transition),
+        background var(--cursor-transition),
+        box-shadow var(--cursor-transition);
+      box-shadow: 0 0 0 rgba(193,168,255,0);
+    }
+
+    .custom-cursor.is-interactive {
+      width: var(--cursor-interactive-size);
+      height: var(--cursor-interactive-size);
+      background: var(--cursor-accent);
+      box-shadow: 0 0 24px rgba(193,168,255,0.35),
+                  0 0 2px rgba(193,168,255,0.6);
+    }
+
+    .custom-cursor.is-down {
+      transform: scale(0.9);
+    }
+
+    .custom-cursor.is-hidden { opacity: 0; }
+  }
+</style>
+
+<div class="custom-cursor" id="custom-cursor" aria-hidden="true"></div>
+
+<script is:inline>
+  (function () {
+    if (!matchMedia('(pointer: fine)').matches) return;
+
+    const cursor = document.getElementById('custom-cursor');
+    if (!cursor) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    html.classList.add('has-custom-cursor');
+    body.classList.add('has-custom-cursor');
+
+    const interactiveSelector = [
+      'a', 'button', 'summary', 'label',
+      'input:not([type=hidden])', 'select', 'textarea',
+      '[role="button"]', '[role="link"]', '[data-interactive="true"]'
+    ].join(',');
+
+    let x = 0, y = 0;
+    let targetX = 0, targetY = 0;
+    let colorPulseTime = 0;
+    let scale = 1;
+    let targetScale = 1;
+    let scaleVelocity = 0;
+
+    function animate() {
+      x += (targetX - x) * 0.15;
+      y += (targetY - y) * 0.15;
+      
+      // Handle scale animation with bounce effect
+      const scaleDiff = targetScale - scale;
+      scaleVelocity += scaleDiff * 0.15; // ADJUST BOUNCE STRENGTH: Higher = more bouncy (slower)
+      scaleVelocity *= 0.85; // ADJUST BOUNCE DAMPING: Lower = more damping (slower)
+      scale += scaleVelocity;
+      
+      // Handle color pulsing for interactive state
+      if (cursor.classList.contains('is-interactive')) {
+        // ADJUST COLOR PULSE SPEED: Higher value = faster color pulsing
+        colorPulseTime += 0.004;
+        
+        // Use sine wave for smooth color pulsing
+        const colorProgress = (Math.sin(colorPulseTime) + 1) / 2; // Convert -1,1 to 0,1
+        
+        // ADJUST CURSOR COLORS: Interpolate between white (#F5F5F5) and violet (#A78BFA)
+        const red = Math.round(245 + (167 - 245) * colorProgress); // F5 -> A7
+        const green = Math.round(245 + (139 - 245) * colorProgress); // F5 -> 8B  
+        const blue = Math.round(245 + (250 - 245) * colorProgress); // F5 -> FA
+        cursor.style.background = `rgb(${red}, ${green}, ${blue})`;
+        
+        targetScale = 1.4; // ADJUST FINAL SIZE: Interactive cursor size
+      } else {
+        cursor.style.background = '#F5F5F5'; // Reset to white
+        targetScale = 1; // Reset to normal size
+        colorPulseTime = 0; // Reset color pulse
+      }
+      
+      cursor.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      targetX = e.clientX - cursor.offsetWidth / 2;
+      targetY = e.clientY - cursor.offsetHeight / 2;
+      cursor.classList.remove('is-hidden');
+      cursor.classList.toggle('is-interactive', !!e.target.closest(interactiveSelector));
+    }, { passive: true });
+
+    window.addEventListener('mousedown', () => cursor.classList.add('is-down'));
+    window.addEventListener('mouseup', () => cursor.classList.remove('is-down'));
+    window.addEventListener('mouseout', (e) => {
+      if (!e.relatedTarget && !e.toElement) cursor.classList.add('is-hidden');
+    });
+    window.addEventListener('blur', () => cursor.classList.add('is-hidden'));
+
+    // Start animation
+    animate();
+
+    addEventListener('astro:before-swap', () => {
+      html.classList.remove('has-custom-cursor');
+      body.classList.remove('has-custom-cursor');
+    });
+  })();
+</script>
