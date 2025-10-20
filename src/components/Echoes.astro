@@ -19,9 +19,8 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
     .crop("center");
   
   return {
-    src: baseImage.quality(80).format("avif").url(),
+    src: baseImage.quality(80).format("webp").url(),
     srcSet: `
-      ${baseImage.quality(80).format("avif").url()} 1x,
       ${baseImage.quality(80).format("webp").url()} 1x,
       ${baseImage.quality(85).format("jpg").url()} 1x
     `,
@@ -71,7 +70,7 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
         >
           <img
             src={s.src}
-            srcSet={s.srcSet}
+            srcset={s.srcSet}
             alt={s.alt}
             loading="lazy"
             decoding="async"
