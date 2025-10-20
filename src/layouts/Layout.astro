@@ -1,4 +1,5 @@
 ---
+import '../styles/global.css';
 import GridBackground from '../components/GridBackground.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
@@ -94,10 +95,6 @@ import SmoothScroll from '../components/SmoothScroll.astro';
         }
       }
     </style>
-    
-    <!-- Defer non-critical CSS -->
-    <link rel="stylesheet" href="/src/styles/global.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/src/styles/global.css"></noscript>
   </head>
   <body class="bg-black text-white min-h-screen">
     <GridBackground />
