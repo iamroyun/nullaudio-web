@@ -69,6 +69,11 @@ function formatDate(dateString: string): string {
         <WideCard 
           id={parseInt(post._id.replace(/[^0-9]/g, '')) || 0}
           image={post.coverImage ? urlFor(post.coverImage).width(400).height(300).fit("crop").crop("center").quality(80).format("webp").url() : "https://placehold.co/400x300/111111/FFFFFF?text=No+Image"}
+          imageSrcSet={post.coverImage ? 
+            `${urlFor(post.coverImage).width(200).height(150).fit("crop").crop("center").quality(80).format("webp").url()} 200w,
+             ${urlFor(post.coverImage).width(400).height(300).fit("crop").crop("center").quality(80).format("webp").url()} 400w,
+             ${urlFor(post.coverImage).width(600).height(450).fit("crop").crop("center").quality(80).format("webp").url()} 600w` : 
+            undefined}
           title={post.title}
           description={post.excerpt || "No description available."}
           link={`/blog/${post.slug.current}`}

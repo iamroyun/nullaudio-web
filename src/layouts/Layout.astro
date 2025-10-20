@@ -1,5 +1,4 @@
 ---
-import '../styles/global.css';
 import GridBackground from '../components/GridBackground.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
@@ -13,6 +12,92 @@ import SmoothScroll from '../components/SmoothScroll.astro';
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="noindex, nofollow" />
     <title>null</title>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/fonts/SuisseIntl-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/SuisseIntl-Light.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Castoro-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Critical CSS inline -->
+    <style>
+      /* Font-face declarations */
+      @font-face {
+        font-family: 'SuisseIntl';
+        src: url('/fonts/SuisseIntl-Regular.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'SuisseIntl';
+        src: url('/fonts/SuisseIntl-Light.woff2') format('woff2');
+        font-weight: 300;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Castoro';
+        src: url('/fonts/Castoro-Regular.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      
+      /* Critical base styles */
+      html, body {
+        font-family: 'SuisseIntl', system-ui, sans-serif;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        color-scheme: dark;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      /* Critical utility classes */
+      .font-serif {
+        font-family: 'Castoro', serif;
+      }
+      
+      .text-gradient {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(190deg, #b2b2b2 0%, #ffffff 75%);
+      }
+      
+      /* Section spacing variables */
+      :root {
+        --section-margin-mobile: 6rem;
+        --section-margin-tablet: 8rem;
+        --section-margin-desktop: 10rem;
+      }
+      
+      .section-spacing {
+        margin-top: var(--section-margin-mobile);
+        margin-bottom: var(--section-margin-mobile);
+      }
+      
+      @media (min-width: 768px) {
+        .section-spacing {
+          margin-top: var(--section-margin-tablet);
+          margin-bottom: var(--section-margin-tablet);
+        }
+      }
+      
+      @media (min-width: 1024px) {
+        .section-spacing {
+          margin-top: var(--section-margin-desktop);
+          margin-bottom: var(--section-margin-desktop);
+        }
+      }
+    </style>
+    
+    <!-- Defer non-critical CSS -->
+    <link rel="stylesheet" href="/src/styles/global.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/src/styles/global.css"></noscript>
   </head>
   <body class="bg-black text-white min-h-screen">
     <GridBackground />

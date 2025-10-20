@@ -12,17 +12,31 @@ const inspiredArtists = await sanityClient.fetch(`
 `);
 
 const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.map((a: any) => {
-  const baseImage = urlFor(a.profileImage)
+  // Generate responsive images for different viewport sizes
+  const mobileImage = urlFor(a.profileImage)
+    .width(165)
+    .height(247)
+    .fit("crop")
+    .crop("center");
+  
+  const tabletImage = urlFor(a.profileImage)
+    .width(330)
+    .height(494)
+    .fit("crop")
+    .crop("center");
+  
+  const desktopImage = urlFor(a.profileImage)
     .width(400)
     .height(600)
     .fit("crop")
     .crop("center");
   
   return {
-    src: baseImage.quality(80).format("webp").url(),
+    src: mobileImage.quality(80).format("webp").url(),
     srcSet: `
-      ${baseImage.quality(80).format("webp").url()} 1x,
-      ${baseImage.quality(85).format("jpg").url()} 1x
+      ${mobileImage.quality(80).format("webp").url()} 165w,
+      ${tabletImage.quality(80).format("webp").url()} 330w,
+      ${desktopImage.quality(80).format("webp").url()} 400w
     `,
     alt: a.name ?? "",
   };
@@ -71,9 +85,12 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
           <img
             src={s.src}
             srcset={s.srcSet}
+            sizes="(max-width: 768px) 38vw, 20rem"
             alt={s.alt}
             loading="lazy"
             decoding="async"
+            width="400"
+            height="600"
             class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05] grayscale group-hover:grayscale-0"
             style="will-change: transform;"
           />
@@ -136,10 +153,7 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
       return;
     }
 
-    // Force layout reflow
-    container.style.width = container.offsetWidth + "px";
-    track.style.width = track.scrollWidth + "px";
-
+    // Batch all DOM reads first to minimize reflows
     const containerWidth = container.offsetWidth;
     const trackWidth = track.scrollWidth;
     const distance = trackWidth - containerWidth;
@@ -150,6 +164,7 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
       return;
     }
 
+    // Batch all DOM writes after reads
     gsap.set(track, { x: 0 });
 
     const tl = gsap.to(track, {

@@ -2,6 +2,7 @@
 export interface Props {
   id: number;
   image: string;
+  imageSrcSet?: string;
   title: string;
   description: string;
   link: string;
@@ -13,6 +14,7 @@ export interface Props {
 const { 
   id,
   image,
+  imageSrcSet,
   title,
   description,
   link,
@@ -34,7 +36,13 @@ const {
 
   <img
     src={image}
+    srcset={imageSrcSet}
+    sizes="(max-width: 768px) 100vw, 16rem"
     alt={title}
+    width="400"
+    height="300"
+    loading="lazy"
+    decoding="async"
     class="w-full md:w-64 h-48 md:h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
   />
   <div class="relative p-6 flex-1 md:h-full">
