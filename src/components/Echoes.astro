@@ -11,10 +11,23 @@ const inspiredArtists = await sanityClient.fetch(`
   }
 `);
 
-const slides: { src: string; alt: string }[] = inspiredArtists.map((a: any) => ({
-  src: urlFor(a.profileImage).width(1200).height(1600).fit("crop").url(),
-  alt: a.name ?? "",
-}));
+const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.map((a: any) => {
+  const baseImage = urlFor(a.profileImage)
+    .width(400)
+    .height(600)
+    .fit("crop")
+    .crop("center");
+  
+  return {
+    src: baseImage.quality(80).format("avif").url(),
+    srcSet: `
+      ${baseImage.quality(80).format("avif").url()} 1x,
+      ${baseImage.quality(80).format("webp").url()} 1x,
+      ${baseImage.quality(85).format("jpg").url()} 1x
+    `,
+    alt: a.name ?? "",
+  };
+});
 ---
 
 <section
@@ -58,8 +71,12 @@ const slides: { src: string; alt: string }[] = inspiredArtists.map((a: any) => (
         >
           <img
             src={s.src}
+            srcSet={s.srcSet}
             alt={s.alt}
+            loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05] grayscale group-hover:grayscale-0"
+            style="will-change: transform;"
           />
           <div class="absolute inset-0 pointer-events-none flex items-end justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <span
