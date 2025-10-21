@@ -3,7 +3,6 @@ import '../styles/global.css';
 import GridBackground from '../components/GridBackground.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
-import FontSwitcher from '../components/FontSwitcher.astro';
 ---
 
 <html lang="en" class="dark">
@@ -16,15 +15,15 @@ import FontSwitcher from '../components/FontSwitcher.astro';
     <title>null</title>
     
     <!-- Preload critical fonts -->
-    <link rel="preload" href="/fonts/Inter[wght].woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Geist[wght].woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/Castoro-Regular.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Critical CSS inline -->
     <style>
       /* Font-face declarations */
       @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter[wght].woff2') format('woff2');
+        font-family: 'Geist';
+        src: url('/fonts/Geist[wght].woff2') format('woff2');
         font-weight: 100 900;
         font-style: normal;
         font-display: swap;
@@ -39,7 +38,7 @@ import FontSwitcher from '../components/FontSwitcher.astro';
       
       /* Critical base styles */
       html, body {
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: 'Geist', system-ui, sans-serif;
         margin: 0;
         width: 100%;
         height: 100%;
@@ -90,7 +89,6 @@ import FontSwitcher from '../components/FontSwitcher.astro';
     </style>
   </head>
   <body class="bg-black text-white min-h-screen">
-    <FontSwitcher />
     <GridBackground />
     <CustomCursor />
     <SmoothScroll />
