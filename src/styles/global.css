@@ -4,9 +4,41 @@
 
 /* Font Definition */
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/Geist[wght].woff2') format('woff2');
-  font-weight: 100 900;
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-Black.woff2') format('woff2');
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
@@ -21,7 +53,7 @@
 
 /* Base Styles */
 html, body {
-  @apply font-sans;
+  font-family: 'Aeonik Pro', sans-serif;
   margin: 0;
   width: 100%;
   height: 100%;
@@ -70,16 +102,16 @@ html {
 
 /* Typography Utilities */
 .heading-2 {
-  @apply text-4xl font-normal mb-4 uppercase;
+  @apply text-4xl font-extrabold mb-6 text-neutral-500 uppercase;
 }
 
 .subheading {
-  @apply text-xl text-neutral-500 mb-8 uppercase font-light tracking-wide;
+  @apply text-xl text-white mb-8 uppercase font-light tracking-normal;
 }
 
 /* Button Utilities */
 .btn-secondary {
-  @apply inline-block px-7 py-6 rounded-2xl bg-black text-neutral-300 border-[1px] border-neutral-800 font-normal text-lg uppercase;
+  @apply inline-block px-7 py-6 rounded-2xl bg-black text-neutral-200 border-[1px] border-neutral-800 font-normal text-lg uppercase;
   @apply hover:text-neutral-900 hover:bg-violet-300;
   @apply focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2;
   @apply transition-colors duration-300;
@@ -95,6 +127,14 @@ html {
 /* Section Fade-In Animation */
 .section-fade {
   will-change: opacity, transform;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.section-fade.fade-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @layer utilities {

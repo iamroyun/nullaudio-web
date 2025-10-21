@@ -3,7 +3,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Geist', 'system-ui', 'sans-serif'],
+        sans: ['Aeonik Pro', 'system-ui', 'sans-serif'],
       },
       colors: {
         brand: {
