@@ -3,6 +3,7 @@ import '../styles/global.css';
 import GridBackground from '../components/GridBackground.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
+import FontSwitcher from '../components/FontSwitcher.astro';
 ---
 
 <html lang="en" class="dark">
@@ -89,6 +90,7 @@ import SmoothScroll from '../components/SmoothScroll.astro';
     </style>
   </head>
   <body class="bg-black text-white min-h-screen">
+    <FontSwitcher />
     <GridBackground />
     <CustomCursor />
     <SmoothScroll />
