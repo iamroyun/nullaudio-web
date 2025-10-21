@@ -4,8 +4,8 @@
 
 /* Font Definition */
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/Geist[wght].woff2') format('woff2');
+  font-family: 'Instrument Sans';
+  src: url('/fonts/InstrumentSans[wght].woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
