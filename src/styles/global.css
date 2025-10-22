@@ -102,11 +102,11 @@ html {
 
 /* Typography Utilities */
 .heading-2 {
-  @apply text-4xl font-extrabold mb-6 text-neutral-500 uppercase;
+  @apply text-4xl font-bold mb-6 text-white uppercase;
 }
 
 .subheading {
-  @apply text-xl text-white mb-8 uppercase font-light tracking-normal;
+  @apply text-xl text-neutral-300 mb-8 uppercase font-light tracking-normal;
 }
 
 /* Button Utilities */

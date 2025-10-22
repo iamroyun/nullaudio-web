@@ -61,6 +61,7 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
       className="subheading max-w-sm"
       text='a collection of voices that echoed through <span class="text-neutral-800">Void</span>'
     />
+    <!--
     <a
       href="/explore"
       class="explore-link mb-4 text-violet-300 font-semibold tracking-wider uppercase text-base transition-colors duration-200"
@@ -68,6 +69,7 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
     >
       EXPLORE ALL
     </a>
+    -->
   </div>
 
   <!-- Right image carousel -->
@@ -181,7 +183,43 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
     console.info("Echoes animation initialized.");
   }
 
+  // Mobile intersection observer for hover effects
+  function initMobileHoverEffects() {
+    if (window.matchMedia('(min-width: 768px)').matches) return; // Only for mobile
+    
+    const images = document.querySelectorAll('.echoes-container img');
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const img = entry.target as HTMLImageElement;
+          if (entry.isIntersecting) {
+            // Trigger hover effect with smooth transition
+            img.style.transition = 'transform 0.8s ease-out, filter 0.8s ease-out';
+            img.style.transform = 'scale(1.05)';
+            img.style.filter = 'grayscale(0)';
+          } else {
+            // Remove hover effect with smooth transition
+            img.style.transition = 'transform 0.8s ease-out, filter 0.8s ease-out';
+            img.style.transform = 'scale(1)';
+            img.style.filter = 'grayscale(1)';
+          }
+        });
+      },
+      {
+        threshold: 0.6, // Trigger when 60% of the image is visible
+        rootMargin: '-20% 0px -20% 0px' // Only trigger when image is in center area
+      }
+    );
+    
+    images.forEach((img) => observer.observe(img));
+  }
+
   // Init when hydrated and on load
-  window.addEventListener("load", initEchoesAnimation);
+  window.addEventListener("load", () => {
+    initEchoesAnimation();
+    initMobileHoverEffects();
+  });
   initEchoesAnimation();
+  initMobileHoverEffects();
 </script>

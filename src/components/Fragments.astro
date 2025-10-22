@@ -21,6 +21,7 @@ import AnimatedText from './animations/AnimatedText.astro';
         className="subheading max-w-sm"
         text='the majority of my life i spent alone quietly sitting in a dimly lit room. <span class="text-neutral-800">while it was lonely, this is where i felt safe.</span>'
       />
+      <!--
       <a 
       href="/samples" 
       class="explore-link mb-4 text-violet-300 font-semibold tracking-wider uppercase text-base transition-colors duration-200"
@@ -28,6 +29,7 @@ import AnimatedText from './animations/AnimatedText.astro';
     >
       EXPLORE ALL
     </a>
+      -->
     </div>
 
     <!-- Floating cards (desktop only) -->
@@ -47,6 +49,7 @@ import AnimatedText from './animations/AnimatedText.astro';
   <!-- Mobile layout: single column -->
   <div class="md:hidden flex flex-col items-center justify-start px-6 text-center py-8">
     <div class="mb-6">
+      <!--
       <a 
         href="/samples" 
         class="explore-link mb-4 text-violet-300 font-semibold tracking-wider uppercase text-base transition-colors duration-200"
@@ -54,6 +57,7 @@ import AnimatedText from './animations/AnimatedText.astro';
       >
         EXPLORE ALL
       </a>
+      -->
       <AnimatedText
         as="h2"
         variant="mask"
@@ -111,6 +115,7 @@ import AnimatedText from './animations/AnimatedText.astro';
   </style>
 
   <script>
+    // Desktop floating card animation
     if (window.matchMedia('(min-width: 768px)').matches) {
       const cards = document.querySelectorAll('.floating-card');
       let mouseX = 0, mouseY = 0;
@@ -138,5 +143,38 @@ import AnimatedText from './animations/AnimatedText.astro';
 
       animate();
     }
+
+    // Mobile intersection observer for hover effects
+    function initMobileHoverEffects() {
+      if (window.matchMedia('(min-width: 768px)').matches) return; // Only for mobile
+      
+      const sampleCards = document.querySelectorAll('.sample-card');
+      
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const card = entry.target as HTMLElement;
+            if (entry.isIntersecting) {
+              // Trigger hover effect
+              card.style.filter = 'grayscale(0)';
+              card.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            } else {
+              // Remove hover effect
+              card.style.filter = 'grayscale(1)';
+              card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
+          });
+        },
+        {
+          threshold: 0.5, // Trigger when 50% of the card is visible
+          rootMargin: '-20% 0px -20% 0px' // Only trigger when card is in center area
+        }
+      );
+      
+      sampleCards.forEach((card) => observer.observe(card));
+    }
+
+    // Initialize mobile hover effects
+    initMobileHoverEffects();
   </script>
 </section>

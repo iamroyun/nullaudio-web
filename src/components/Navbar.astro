@@ -1,5 +1,4 @@
 ---
-import AnimatedText from './animations/AnimatedText.astro';
 // Navigation component with responsive design and smooth animations
 // Features: Desktop horizontal nav, mobile hamburger menu with overlay
 ---
@@ -46,27 +45,27 @@ import AnimatedText from './animations/AnimatedText.astro';
   class="fixed inset-0 z-40 bg-black/0 opacity-0 pointer-events-none transition-all duration-300 ease-out md:hidden"
 >
   <div class="flex flex-col items-center justify-center h-full gap-12">
-    <AnimatedText
-      as="a"
-      variant="mask"
-      className="nav-link-mobile text-3xl font-regular uppercase tracking-widest"
-      text="fragments"
-      href="/fragments"
-    />
-    <AnimatedText
-      as="a"
-      variant="mask"
-      className="nav-link-mobile text-3xl font-regular uppercase tracking-widest"
-      text="transmissions"
-      href="/transmissions"
-    />
-    <AnimatedText
-      as="a"
-      variant="mask"
-      className="nav-link-mobile text-3xl font-regular uppercase tracking-widest"
-      text="manifest"
-      href="/manifest"
-    />
+    <a 
+      href="/fragments" 
+      class="nav-link-mobile text-3xl font-regular uppercase tracking-widest"
+      data-mobile-nav-link
+    >
+      <span style="display: inline-block; transform: translateY(110%); filter: blur(8px); opacity: 0;">fragments</span>
+    </a>
+    <a 
+      href="/transmissions" 
+      class="nav-link-mobile text-3xl font-regular uppercase tracking-widest"
+      data-mobile-nav-link
+    >
+      <span style="display: inline-block; transform: translateY(110%); filter: blur(8px); opacity: 0;">transmissions</span>
+    </a>
+    <a 
+      href="/manifest" 
+      class="nav-link-mobile text-3xl font-regular uppercase tracking-widest"
+      data-mobile-nav-link
+    >
+      <span style="display: inline-block; transform: translateY(110%); filter: blur(8px); opacity: 0;">manifest</span>
+    </a>
   </div>
 </div>
 
@@ -120,7 +119,7 @@ import AnimatedText from './animations/AnimatedText.astro';
   // DOM elements
   const menuButton = document.getElementById('menuButton');
   const overlay = document.getElementById('mobileOverlay');
-  const mobileLinks = overlay ? overlay.querySelectorAll('a') : [];
+  const mobileLinks = overlay ? overlay.querySelectorAll('[data-mobile-nav-link]') : [];
   
   // State management
   let isMenuOpen = false;
@@ -154,15 +153,10 @@ import AnimatedText from './animations/AnimatedText.astro';
     
     // Manually trigger mask animations for mobile menu links
     setTimeout(() => {
-      const mobileLinks = overlay.querySelectorAll('a');
+      const mobileLinks = overlay.querySelectorAll('[data-mobile-nav-link]');
       mobileLinks.forEach((link, index) => {
         const inner = link.querySelector('span');
         if (inner) {
-          // Reset initial state
-          inner.style.transform = 'translateY(110%)';
-          inner.style.filter = 'blur(8px)';
-          inner.style.opacity = '0';
-          
           // Animate in with stagger
           setTimeout(() => {
             gsap.to(inner, {
@@ -206,7 +200,7 @@ import AnimatedText from './animations/AnimatedText.astro';
     document.body.style.overflow = '';
     
     // Reset mobile menu link animations
-    const mobileLinks = overlay.querySelectorAll('a');
+    const mobileLinks = overlay.querySelectorAll('[data-mobile-nav-link]');
     mobileLinks.forEach((link) => {
       const inner = link.querySelector('span');
       if (inner) {
