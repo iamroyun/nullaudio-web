@@ -116,6 +116,7 @@ import AnimatedText from './animations/AnimatedText.astro';
 
 <!-- Mobile Menu JavaScript -->
 <script>
+  import { gsap } from 'gsap';
   // DOM elements
   const menuButton = document.getElementById('menuButton');
   const overlay = document.getElementById('mobileOverlay');
@@ -151,7 +152,30 @@ import AnimatedText from './animations/AnimatedText.astro';
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
     
-    // AnimatedText components will handle their own animations
+    // Manually trigger mask animations for mobile menu links
+    setTimeout(() => {
+      const mobileLinks = overlay.querySelectorAll('a');
+      mobileLinks.forEach((link, index) => {
+        const inner = link.querySelector('span');
+        if (inner) {
+          // Reset initial state
+          inner.style.transform = 'translateY(110%)';
+          inner.style.filter = 'blur(8px)';
+          inner.style.opacity = '0';
+          
+          // Animate in with stagger
+          setTimeout(() => {
+            gsap.to(inner, {
+              y: '0%',
+              opacity: 1,
+              filter: 'blur(0px)',
+              duration: 1.4,
+              ease: 'power3.out',
+            });
+          }, index * 150); // Stagger each link by 150ms
+        }
+      });
+    }, 100); // Small delay to ensure overlay is visible
   }
   
   /**
@@ -181,7 +205,17 @@ import AnimatedText from './animations/AnimatedText.astro';
     // Restore body scroll
     document.body.style.overflow = '';
     
-    // AnimatedText components will handle their own animations
+    // Reset mobile menu link animations
+    const mobileLinks = overlay.querySelectorAll('a');
+    mobileLinks.forEach((link) => {
+      const inner = link.querySelector('span');
+      if (inner) {
+        // Reset to initial state
+        inner.style.transform = 'translateY(110%)';
+        inner.style.filter = 'blur(8px)';
+        inner.style.opacity = '0';
+      }
+    });
   }
   
   /**
