@@ -48,7 +48,7 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
   class="section-fade echoes-section relative flex flex-col md:flex-row items-center min-h-screen overflow-hidden text-white bg-transparent section-spacing"
 >
   <!-- Left text column -->
-  <div class="z-10 w-full md:w-2/6 px-8 md:px-16 py-16">
+  <div class="z-10 w-full md:w-2/6 px-8 md:px-16 py-16 flex flex-col items-center md:items-start text-center md:text-left">
     <AnimatedText
       as="h2"
       variant="mask"
@@ -58,18 +58,10 @@ const slides: { src: string; srcSet: string; alt: string }[] = inspiredArtists.m
     <AnimatedText
       as="p"
       variant="words"
-      className="subheading max-w-sm"
-      text='a collection of voices that echoed through <span class="text-neutral-800">Void</span>'
+      className="subheading max-w-xs md:max-w-sm"
+      text='a collection of voices that echoed through <span class="text-neutral-800">Void</span>.'
     />
-    <!--
-    <a
-      href="/explore"
-      class="explore-link mb-4 text-violet-300 font-semibold tracking-wider uppercase text-base transition-colors duration-200"
-      aria-label="Explore all echoes"
-    >
-      EXPLORE ALL
-    </a>
-    -->
+
   </div>
 
   <!-- Right image carousel -->

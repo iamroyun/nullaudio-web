@@ -1,0 +1,31 @@
+---
+import Orb from './Orb';
+---
+
+<section class="relative w-full h-screen overflow-hidden">
+  <!-- Orb Background -->
+  <div class="absolute inset-0 w-full h-full">
+    <Orb
+      client:load
+      hoverIntensity={0.5}
+      rotateOnHover={true}
+      hue={0}
+      forceHoverState={false}
+    />
+  </div>
+
+  <!-- Content Overlay -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-10 pointer-events-none">
+    <h1 class="text-3xl md:text-5xl font-light mt-8 mb-8 lowercase max-w-xs md:max-w-sm">
+      audio fragments <br> of solitude.
+    </h1>
+    <a
+      href="/samples"
+      class="btn-secondary pointer-events-auto"
+      aria-label="Enter the void and explore samples"
+    >
+      enter the <span class="text-neutral-100">{'{void}'}</span>
+    </a>
+  </div>
+</section>
+
