@@ -24,7 +24,7 @@ const { artist } = Astro.props;
 ---
 
 <Layout title={`${artist.name} | null.audio`}>
-  <main class="min-h-screen px-4 py-8">
+  <main class="min-h-screen py-8">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-7xl md:text-8xl font-medium leading-tight text-balance text-white tracking-tighter mb-4">{artist.name}</h1>
       {artist.profileImage && (

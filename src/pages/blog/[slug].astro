@@ -47,7 +47,7 @@ const pageDescription = post.seo?.metaDescription || post.excerpt || '';
 <Layout title={`${pageTitle} | null.audio`}>
   <main class="min-h-screen py-8 pt-24">
     {/* Header */}
-    <header class="mb-12 px-4">
+    <header class="mb-12">
       <div class="max-w-6xl mx-auto text-center">
         <a href="/blog" class="inline-block text-gray-400 hover:text-cyan-400 transition-colors mb-8">
           ← transmissions
@@ -82,7 +82,7 @@ const pageDescription = post.seo?.metaDescription || post.excerpt || '';
     </header>
 
     {/* Content */}
-    <article class="px-4">
+    <article>
       <div class="max-w-4xl mx-auto">
         {post.content && (
           <div class="max-w-80ch mx-auto line-height-1.7">
